@@ -1,3 +1,8 @@
+import subprocess
+import sys
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "pandas", "numpy", "plotly", "scikit-learn"])
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,14 +11,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 
-# ===== PAGE CONFIG =====
-st.set_page_config(
-    page_title="Social Media Analytics",
-    page_icon="📊",
-    layout="wide"
-)
+st.set_page_config(page_title="Social Media Analytics", page_icon="📊", layout="wide")
 
-# ===== HEADER =====
 st.markdown("""
     <div style="background: linear-gradient(135deg, #1a1a2e, #0f3460);
                 padding: 2rem; border-radius: 12px;
@@ -25,7 +24,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# ===== LOAD DATA =====
 @st.cache_data
 def load_data():
     df = pd.read_csv("Social_media_Dataset.csv")
@@ -33,16 +31,10 @@ def load_data():
 
 df = load_data()
 
-# ===== TABS =====
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📋 Dataset",
-    "📈 EDA",
-    "💬 Sentiment",
-    "🔥 Virality",
-    "🤖 ML Prediction"
+    "📋 Dataset", "📈 EDA", "💬 Sentiment", "🔥 Virality", "🤖 ML Prediction"
 ])
 
-# ===== TAB 1 — DATASET =====
 with tab1:
     st.subheader("Raw Dataset")
     st.write(f"Total Records: **{df.shape[0]}** | Total Columns: **{df.shape[1]}**")
@@ -50,7 +42,6 @@ with tab1:
     st.subheader("Basic Statistics")
     st.dataframe(df.describe(), use_container_width=True)
 
-# ===== TAB 2 — EDA =====
 with tab2:
     st.subheader("Platform Distribution")
     platform_counts = df["Platform"].value_counts().reset_index()
@@ -61,11 +52,9 @@ with tab2:
 
     st.subheader("Engagement Rate Distribution")
     fig2 = px.histogram(df, x="Engagement_Rate",
-                        title="Engagement Rate Distribution",
-                        nbins=30)
+                        title="Engagement Rate Distribution", nbins=30)
     st.plotly_chart(fig2, use_container_width=True)
 
-# ===== TAB 3 — SENTIMENT =====
 with tab3:
     st.subheader("Sentiment Distribution")
     sentiment_counts = df["Sentiment_Label"].value_counts().reset_index()
@@ -84,22 +73,16 @@ with tab3:
     for i, row in sentiment_counts.iterrows():
         [col1, col2, col3][i].metric(label=row["Sentiment"], value=row["Count"])
 
-# ===== TAB 4 — VIRALITY =====
 with tab4:
     st.subheader("Virality Score Analysis")
     st.markdown("**Formula:** `Virality Score = Likes + (2 × Comments) + (3 × Shares)`")
-
     df["Virality_Score"] = df["Likes"] + (2 * df["Comments"]) + (3 * df["Shares"])
-
     top10 = df.nlargest(10, "Virality_Score")[["Platform", "Likes", "Comments", "Shares", "Virality_Score"]]
     st.dataframe(top10, use_container_width=True)
-
     fig4 = px.bar(top10, x="Virality_Score", y=top10.index.astype(str),
-                  orientation="h", title="Top 10 Viral Posts",
-                  color="Virality_Score")
+                  orientation="h", title="Top 10 Viral Posts", color="Virality_Score")
     st.plotly_chart(fig4, use_container_width=True)
 
-# ===== TAB 5 — ML =====
 with tab5:
     st.subheader("Engagement Rate Prediction — Linear Regression")
     st.markdown("**Features:** Likes, Comments, Shares → **Target:** Engagement Rate")
@@ -107,10 +90,7 @@ with tab5:
     X = df[["Likes", "Comments", "Shares"]]
     y = df["Engagement_Rate"]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     model = LinearRegression()
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
@@ -127,12 +107,10 @@ with tab5:
                       title="Actual vs Predicted Engagement Rate")
     st.plotly_chart(fig5, use_container_width=True)
 
-    # Live Predictor
     st.markdown("---")
     st.subheader("🎯 Try Live Prediction")
     l = st.slider("Likes", 0, 10000, 500)
     c = st.slider("Comments", 0, 1000, 50)
     s = st.slider("Shares", 0, 1000, 30)
-
     prediction = model.predict([[l, c, s]])[0]
     st.success(f"Predicted Engagement Rate: **{prediction:.4f}**")
