@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+import plotly.express as px
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
@@ -55,38 +53,36 @@ with tab1:
 # ===== TAB 2 — EDA =====
 with tab2:
     st.subheader("Platform Distribution")
-    platform_counts = df["Platform"].value_counts()
-    fig, ax = plt.subplots()
-    platform_counts.plot(kind="bar", ax=ax, color="#e94560")
-    ax.set_xlabel("Platform")
-    ax.set_ylabel("Number of Posts")
-    ax.set_title("Posts per Platform")
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    platform_counts = df["Platform"].value_counts().reset_index()
+    platform_counts.columns = ["Platform", "Count"]
+    fig1 = px.bar(platform_counts, x="Platform", y="Count",
+                  color="Platform", title="Posts per Platform")
+    st.plotly_chart(fig1, use_container_width=True)
 
     st.subheader("Engagement Rate Distribution")
-    fig2, ax2 = plt.subplots()
-    ax2.hist(df["Engagement_Rate"], bins=30, color="#0f3460", edgecolor="white")
-    ax2.set_xlabel("Engagement Rate")
-    ax2.set_ylabel("Frequency")
-    st.pyplot(fig2)
+    fig2 = px.histogram(df, x="Engagement_Rate",
+                        title="Engagement Rate Distribution",
+                        nbins=30)
+    st.plotly_chart(fig2, use_container_width=True)
 
 # ===== TAB 3 — SENTIMENT =====
 with tab3:
     st.subheader("Sentiment Distribution")
-    sentiment_counts = df["Sentiment_Label"].value_counts()
-    fig3, ax3 = plt.subplots()
-    colors = ["#2ecc71", "#e74c3c", "#f39c12"]
-    sentiment_counts.plot(kind="bar", ax=ax3, color=colors)
-    ax3.set_xlabel("Sentiment")
-    ax3.set_ylabel("Count")
-    ax3.set_title("Positive / Negative / Neutral")
-    plt.xticks(rotation=0)
-    st.pyplot(fig3)
+    sentiment_counts = df["Sentiment_Label"].value_counts().reset_index()
+    sentiment_counts.columns = ["Sentiment", "Count"]
+    fig3 = px.bar(sentiment_counts, x="Sentiment", y="Count",
+                  color="Sentiment",
+                  color_discrete_map={
+                      "Positive": "#2ecc71",
+                      "Negative": "#e74c3c",
+                      "Neutral": "#f39c12"
+                  },
+                  title="Positive / Negative / Neutral")
+    st.plotly_chart(fig3, use_container_width=True)
 
     col1, col2, col3 = st.columns(3)
-    for i, (label, count) in enumerate(sentiment_counts.items()):
-        [col1, col2, col3][i].metric(label=label, value=count)
+    for i, row in sentiment_counts.iterrows():
+        [col1, col2, col3][i].metric(label=row["Sentiment"], value=row["Count"])
 
 # ===== TAB 4 — VIRALITY =====
 with tab4:
@@ -98,21 +94,17 @@ with tab4:
     top10 = df.nlargest(10, "Virality_Score")[["Platform", "Likes", "Comments", "Shares", "Virality_Score"]]
     st.dataframe(top10, use_container_width=True)
 
-    fig4, ax4 = plt.subplots()
-    ax4.barh(range(10), top10["Virality_Score"], color="#e94560")
-    ax4.set_yticks(range(10))
-    ax4.set_yticklabels([f"Post {i+1}" for i in range(10)])
-    ax4.set_xlabel("Virality Score")
-    ax4.set_title("Top 10 Viral Posts")
-    st.pyplot(fig4)
+    fig4 = px.bar(top10, x="Virality_Score", y=top10.index.astype(str),
+                  orientation="h", title="Top 10 Viral Posts",
+                  color="Virality_Score")
+    st.plotly_chart(fig4, use_container_width=True)
 
 # ===== TAB 5 — ML =====
 with tab5:
     st.subheader("Engagement Rate Prediction — Linear Regression")
     st.markdown("**Features:** Likes, Comments, Shares → **Target:** Engagement Rate")
 
-    features = ["Likes", "Comments", "Shares"]
-    X = df[features]
+    X = df[["Likes", "Comments", "Shares"]]
     y = df["Engagement_Rate"]
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -130,14 +122,10 @@ with tab5:
     col1.metric("R² Score", f"{r2:.4f}")
     col2.metric("Mean Squared Error", f"{mse:.4f}")
 
-    fig5, ax5 = plt.subplots()
-    ax5.scatter(y_test, y_pred, alpha=0.5, color="#0f3460")
-    ax5.plot([y_test.min(), y_test.max()],
-             [y_test.min(), y_test.max()], "r--")
-    ax5.set_xlabel("Actual Engagement Rate")
-    ax5.set_ylabel("Predicted Engagement Rate")
-    ax5.set_title("Actual vs Predicted")
-    st.pyplot(fig5)
+    fig5 = px.scatter(x=y_test, y=y_pred,
+                      labels={"x": "Actual", "y": "Predicted"},
+                      title="Actual vs Predicted Engagement Rate")
+    st.plotly_chart(fig5, use_container_width=True)
 
     # Live Predictor
     st.markdown("---")
