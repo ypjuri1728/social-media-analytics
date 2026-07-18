@@ -1,11 +1,14 @@
-# 📊 Data-Driven Social Engagement Analytics System
-### Using Sentiment Analysis and Engagement Prediction
+📊 Data-Driven Social Engagement Analytics System
+Using Sentiment Analysis and Engagement Prediction
 
-## 📌 Overview
+🔗 Live App: https://ypjuri1728.streamlit.app
+
+📌 Overview
 
 This project analyzes social media engagement data using data science techniques including
 data preprocessing, exploratory data analysis, sentiment analysis, virality scoring, and
-machine learning-based engagement prediction.
+machine learning-based engagement prediction. Deployed as an interactive Streamlit dashboard
+with 5 tabs covering the full analysis pipeline — from raw data to live engagement prediction.
 
 > **Submitted by:** Priyanshi Yadav  
 > **Program:** Unlox Data Science Program  
