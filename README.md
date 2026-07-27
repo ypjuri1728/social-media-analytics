@@ -20,10 +20,10 @@ with 5 tabs covering the full analysis pipeline — from raw data to live engage
 
 ```
 📦 social-media-analytics
-├── 📓 Social_Media_Analytics.ipynb   # Main Jupyter Notebook
-├── 📄 Social_media_Dataset.csv       # Dataset (12,000 records, 28 attributes)
-├── 📄 Major_Project_Report.pdf       # Full project report
-└── 📄 README.md                      # Project documentation
+ 📓 Social_Media_Analytics.ipynb   # Main Jupyter Notebook
+ 📄 Social_media_Dataset.csv       # Dataset (12,000 records, 28 attributes)
+ 📄 Major_Project_Report.pdf       # Full project report
+ 📄 README.md                      # Project documentation
 ```
 
 ---
