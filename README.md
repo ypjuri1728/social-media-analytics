@@ -1,7 +1,7 @@
 # 📊 Data-Driven Social Engagement Analytics System
 ## Using Sentiment Analysis and Engagement Prediction
 
-🔗 Live App: https://ypjuri1728.streamlit.app
+🔗 Live App: [https://ypjuri1728.streamlit.app](https://social-media-analytics-xb6hzukywu6fk8d9mmoxcw.streamlit.app/)
 
 📌 Overview
 
